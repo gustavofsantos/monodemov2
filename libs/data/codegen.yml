@@ -9,4 +9,8 @@ generates:
       - typescript-react-query
       - typescript-resolvers
     config:
-      fetcher: fetch
+      fetcher:
+        endpoint: "http://localhost:3333/graphql"
+        fetchParams:
+          headers:
+            Content-Type: "application/json"

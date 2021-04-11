@@ -81,7 +81,7 @@
         },
         "serve": {
           "executor": "@nrwl/next:server",
-          "options": { "buildTarget": "app:build", "dev": true },
+          "options": { "buildTarget": "app:build", "dev": true, "port": 4300 },
           "configurations": {
             "production": {
               "buildTarget": "app:build:production",
@@ -193,14 +193,6 @@
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": { "lintFilePatterns": ["libs/data/**/*.ts"] }
-        },
-        "test": {
-          "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/data"],
-          "options": {
-            "jestConfig": "libs/data/jest.config.js",
-            "passWithNoTests": true
-          }
         }
       }
     }

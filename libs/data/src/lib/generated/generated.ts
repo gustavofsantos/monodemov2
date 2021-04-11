@@ -1,19 +1,19 @@
 import { GraphQLResolveInfo } from 'graphql';
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useMutation, UseMutationOptions, useQuery, UseQueryOptions } from 'react-query';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
 
-function fetcher<TData, TVariables>(endpoint: string, requestInit: RequestInit, query: string, variables?: TVariables) {
+function fetcher<TData, TVariables>(query: string, variables?: TVariables) {
   return async (): Promise<TData> => {
-    const res = await fetch(endpoint, {
-      method: 'POST',
-      ...requestInit,
+    const res = await fetch("http://localhost:3333/graphql", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
       body: JSON.stringify({ query, variables }),
     });
-
+    
     const json = await res.json();
 
     if (json.errors) {
@@ -40,7 +40,7 @@ export type AnswerFormData = {
 };
 
 export type AnswerQuestionData = {
-  id: Scalars['String'];
+  label: Scalars['String'];
   answer: Scalars['String'];
 };
 
@@ -55,7 +55,6 @@ export type AnsweredQuestion = {
   __typename?: 'AnsweredQuestion';
   label: Scalars['String'];
   answer: Scalars['String'];
-  placeholder?: Maybe<Scalars['String']>;
 };
 
 export type Form = {
@@ -66,13 +65,27 @@ export type Form = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createForm?: Maybe<Form>;
   answerForm?: Maybe<AnsweredForm>;
 };
 
 
+export type MutationCreateFormArgs = {
+  data: NewFormData;
+};
+
+
 export type MutationAnswerFormArgs = {
-  id: Scalars['String'];
-  data?: Maybe<AnswerFormData>;
+  data: AnswerFormData;
+};
+
+export type NewFormData = {
+  questions: Array<Maybe<NewFormQuestionData>>;
+};
+
+export type NewFormQuestionData = {
+  label: Scalars['String'];
+  placeholder?: Maybe<Scalars['String']>;
 };
 
 export type Query = {
@@ -99,6 +112,41 @@ export type Question = {
   placeholder?: Maybe<Scalars['String']>;
 };
 
+export type FormCreatorMutationVariables = Exact<{
+  questions: Array<Maybe<NewFormQuestionData>> | Maybe<NewFormQuestionData>;
+}>;
+
+
+export type FormCreatorMutation = (
+  { __typename?: 'Mutation' }
+  & { createForm?: Maybe<(
+    { __typename?: 'Form' }
+    & Pick<Form, 'id'>
+    & { questions: Array<Maybe<(
+      { __typename?: 'Question' }
+      & Pick<Question, 'label' | 'placeholder'>
+    )>> }
+  )> }
+);
+
+export type FormAnswerMutationVariables = Exact<{
+  formId: Scalars['String'];
+  answers: Array<Maybe<AnswerQuestionData>> | Maybe<AnswerQuestionData>;
+}>;
+
+
+export type FormAnswerMutation = (
+  { __typename?: 'Mutation' }
+  & { answerForm?: Maybe<(
+    { __typename?: 'AnsweredForm' }
+    & Pick<AnsweredForm, 'id' | 'formId'>
+    & { questions: Array<Maybe<(
+      { __typename?: 'AnsweredQuestion' }
+      & Pick<AnsweredQuestion, 'label' | 'answer'>
+    )>> }
+  )> }
+);
+
 export type FormListQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -109,17 +157,74 @@ export type FormListQuery = (
     & Pick<Form, 'id'>
     & { questions: Array<Maybe<(
       { __typename?: 'Question' }
-      & Pick<Question, 'placeholder'>
+      & Pick<Question, 'label' | 'placeholder'>
     )>> }
   )>>> }
 );
 
+export type FormItemQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
 
+
+export type FormItemQuery = (
+  { __typename?: 'Query' }
+  & { form?: Maybe<(
+    { __typename?: 'Form' }
+    & Pick<Form, 'id'>
+    & { questions: Array<Maybe<(
+      { __typename?: 'Question' }
+      & Pick<Question, 'label' | 'placeholder'>
+    )>> }
+  )> }
+);
+
+
+export const FormCreatorDocument = `
+    mutation formCreator($questions: [NewFormQuestionData]!) {
+  createForm(data: {questions: $questions}) {
+    id
+    questions {
+      label
+      placeholder
+    }
+  }
+}
+    `;
+export const useFormCreatorMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<FormCreatorMutation, TError, FormCreatorMutationVariables, TContext>) => 
+    useMutation<FormCreatorMutation, TError, FormCreatorMutationVariables, TContext>(
+      (variables?: FormCreatorMutationVariables) => fetcher<FormCreatorMutation, FormCreatorMutationVariables>(FormCreatorDocument, variables)(),
+      options
+    );
+export const FormAnswerDocument = `
+    mutation formAnswer($formId: String!, $answers: [AnswerQuestionData]!) {
+  answerForm(data: {formId: $formId, answers: $answers}) {
+    id
+    formId
+    questions {
+      label
+      answer
+    }
+  }
+}
+    `;
+export const useFormAnswerMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<FormAnswerMutation, TError, FormAnswerMutationVariables, TContext>) => 
+    useMutation<FormAnswerMutation, TError, FormAnswerMutationVariables, TContext>(
+      (variables?: FormAnswerMutationVariables) => fetcher<FormAnswerMutation, FormAnswerMutationVariables>(FormAnswerDocument, variables)(),
+      options
+    );
 export const FormListDocument = `
     query formList {
   forms {
     id
     questions {
+      label
       placeholder
     }
   }
@@ -129,13 +234,35 @@ export const useFormListQuery = <
       TData = FormListQuery,
       TError = unknown
     >(
-      dataSource: { endpoint: string, fetchParams?: RequestInit }, 
       variables?: FormListQueryVariables, 
       options?: UseQueryOptions<FormListQuery, TError, TData>
     ) => 
     useQuery<FormListQuery, TError, TData>(
       ['formList', variables],
-      fetcher<FormListQuery, FormListQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, FormListDocument, variables),
+      fetcher<FormListQuery, FormListQueryVariables>(FormListDocument, variables),
+      options
+    );
+export const FormItemDocument = `
+    query formItem($id: String!) {
+  form(id: $id) {
+    id
+    questions {
+      label
+      placeholder
+    }
+  }
+}
+    `;
+export const useFormItemQuery = <
+      TData = FormItemQuery,
+      TError = unknown
+    >(
+      variables: FormItemQueryVariables, 
+      options?: UseQueryOptions<FormItemQuery, TError, TData>
+    ) => 
+    useQuery<FormItemQuery, TError, TData>(
+      ['formItem', variables],
+      fetcher<FormItemQuery, FormItemQueryVariables>(FormItemDocument, variables),
       options
     );
 
@@ -223,6 +350,8 @@ export type ResolversTypes = {
   AnsweredQuestion: ResolverTypeWrapper<AnsweredQuestion>;
   Form: ResolverTypeWrapper<Form>;
   Mutation: ResolverTypeWrapper<{}>;
+  NewFormData: NewFormData;
+  NewFormQuestionData: NewFormQuestionData;
   Query: ResolverTypeWrapper<{}>;
   Question: ResolverTypeWrapper<Question>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
@@ -237,6 +366,8 @@ export type ResolversParentTypes = {
   AnsweredQuestion: AnsweredQuestion;
   Form: Form;
   Mutation: {};
+  NewFormData: NewFormData;
+  NewFormQuestionData: NewFormQuestionData;
   Query: {};
   Question: Question;
   Boolean: Scalars['Boolean'];
@@ -252,7 +383,6 @@ export type AnsweredFormResolvers<ContextType = any, ParentType extends Resolver
 export type AnsweredQuestionResolvers<ContextType = any, ParentType extends ResolversParentTypes['AnsweredQuestion'] = ResolversParentTypes['AnsweredQuestion']> = {
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   answer?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  placeholder?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -263,7 +393,8 @@ export type FormResolvers<ContextType = any, ParentType extends ResolversParentT
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  answerForm?: Resolver<Maybe<ResolversTypes['AnsweredForm']>, ParentType, ContextType, RequireFields<MutationAnswerFormArgs, 'id'>>;
+  createForm?: Resolver<Maybe<ResolversTypes['Form']>, ParentType, ContextType, RequireFields<MutationCreateFormArgs, 'data'>>;
+  answerForm?: Resolver<Maybe<ResolversTypes['AnsweredForm']>, ParentType, ContextType, RequireFields<MutationAnswerFormArgs, 'data'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {

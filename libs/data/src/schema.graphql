@@ -11,7 +11,6 @@ type Form {
 type AnsweredQuestion {
   label: String!
   answer: String!
-  placeholder: String
 }
 
 type AnsweredForm {
@@ -28,11 +27,21 @@ type Query {
 }
 
 type Mutation {
-  answerForm(id: String!, data: AnswerFormData): AnsweredForm
+  createForm(data: NewFormData!): Form
+  answerForm(data: AnswerFormData!): AnsweredForm
+}
+
+input NewFormQuestionData {
+  label: String!
+  placeholder: String
+}
+
+input NewFormData {
+  questions: [NewFormQuestionData]!
 }
 
 input AnswerQuestionData {
-  id: String!
+  label: String!
   answer: String!
 }
 

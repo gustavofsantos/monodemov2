@@ -7,6 +7,12 @@ This project was generated using [Nx](https://nx.dev).
 - Create quiz and send them to the users
 - Anonymously respond to quiz
 
+## Start apps
+
+### Run all
+
+`$ yarn nx run-many --target=serve --all --parallel`
+
 ## Adding capabilities to your workspace
 
 Nx supports many plugins which add capabilities for developing different types of applications and different tools.

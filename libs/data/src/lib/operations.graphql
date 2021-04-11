@@ -1,9 +1,40 @@
-query formList {
-  forms {
+mutation formCreator($questions: [NewFormQuestionData]!) {
+  createForm(data: { questions: $questions }) {
     id
     questions {
+      label
       placeholder
     }
   }
 }
 
+mutation formAnswer($formId: String!, $answers: [AnswerQuestionData]!) {
+  answerForm(data: { formId: $formId, answers: $answers }) {
+    id
+    formId
+    questions {
+      label
+      answer
+    }
+  }
+}
+
+query formList {
+  forms {
+    id
+    questions {
+      label
+      placeholder
+    }
+  }
+}
+
+query formItem($id: String!) {
+  form(id: $id) {
+    id
+    questions {
+      label
+      placeholder
+    }
+  }
+}
