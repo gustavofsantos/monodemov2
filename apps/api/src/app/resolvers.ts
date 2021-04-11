@@ -1,23 +1,23 @@
 import { AnswerFormData, NewFormData, Resolvers } from '@monodemov2/data';
-import { AskMongoRepo } from './repo/mongo-repo';
+import { AskService } from '@monodemov2/services';
 
-const repo = new AskMongoRepo();
+const ask = new AskService();
 
 export const resolvers: Resolvers = {
   Query: {
-    forms: () => repo.allForms(),
-    answeredForms: () => repo.allAnsweredForms(),
-    form: (args: { id: string }) => repo.formById(args.id),
-    answeredForm: (args: { id: string }) => repo.answeredFormById(args.id),
+    forms: () => ask.allForms(),
+    answeredForms: () => ask.allAnsweredForms(),
+    form: (args: { id: string }) => ask.formById(args.id),
+    answeredForm: (args: { id: string }) => ask.answeredFormById(args.id),
   },
   Mutation: {
     answerForm: async (args: { data: AnswerFormData }) => {
-      const formId = await repo.createAnsweredForm(args.data);
-      return repo.answeredFormById(formId);
+      const formId = await ask.createAnsweredForm(args.data);
+      return ask.answeredFormById(formId);
     },
     createForm: async (args: { data: NewFormData }) => {
-      const formId = await repo.createForm(args.data);
-      return repo.formById(formId);
+      const formId = await ask.createForm(args.data);
+      return ask.formById(formId);
     },
   },
 };

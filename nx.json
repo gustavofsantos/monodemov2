@@ -18,6 +18,7 @@
     "app-e2e": { "tags": [], "implicitDependencies": ["app"] },
     "api": { "tags": [] },
     "data": { "tags": [] },
-    "ui": { "tags": [] }
+    "ui": { "tags": [] },
+    "services": { "tags": [] }
   }
 }

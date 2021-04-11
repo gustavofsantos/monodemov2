@@ -5,7 +5,6 @@ import {
   NewFormData,
 } from '@monodemov2/data';
 import { MongoClient, ObjectId } from 'mongodb';
-import { AskRepo } from './repo';
 
 const defaultConnectionUrl =
   'mongodb://localhost:27017/ask-dev?retryWrites=true&writeConcern=majority';
@@ -30,7 +29,7 @@ class BaseMongoRepo {
   }
 }
 
-export class AskMongoRepo extends BaseMongoRepo implements AskRepo {
+export class AskService extends BaseMongoRepo {
   private client: MongoClient;
 
   constructor(url = defaultConnectionUrl) {
