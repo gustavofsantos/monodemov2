@@ -16,6 +16,7 @@
     "admin-e2e": { "tags": [], "implicitDependencies": ["admin"] },
     "app": { "tags": [] },
     "app-e2e": { "tags": [], "implicitDependencies": ["app"] },
-    "api": { "tags": [] }
+    "api": { "tags": [] },
+    "data": { "tags": [] }
   }
 }
