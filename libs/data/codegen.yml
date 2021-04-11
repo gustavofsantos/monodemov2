@@ -1,0 +1,12 @@
+overwrite: true
+schema: "libs/data/src/schema.graphql"
+generates:
+  libs/data/src/lib/generated/generated.ts:
+    documents: "libs/data/src/**/*.graphql"
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-react-query
+      - typescript-resolvers
+    config:
+      fetcher: fetch

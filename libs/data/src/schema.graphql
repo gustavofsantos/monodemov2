@@ -1,0 +1,42 @@
+type Question {
+  label: String!
+  placeholder: String
+}
+
+type Form {
+  id: String!
+  questions: [Question]!
+}
+
+type AnsweredQuestion {
+  label: String!
+  answer: String!
+  placeholder: String
+}
+
+type AnsweredForm {
+  id: String!
+  formId: String!
+  questions: [AnsweredQuestion]!
+}
+
+type Query {
+  forms: [Form]
+  form(id: String!): Form
+  answeredForms: [AnsweredForm]
+  answeredForm(id: String!): AnsweredForm
+}
+
+type Mutation {
+  answerForm(id: String!, data: AnswerFormData): AnsweredForm
+}
+
+input AnswerQuestionData {
+  id: String!
+  answer: String!
+}
+
+input AnswerFormData {
+  formId: String!
+  answers: [AnswerQuestionData]
+}

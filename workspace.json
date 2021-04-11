@@ -180,6 +180,16 @@
       "sourceRoot": "libs/data/src",
       "projectType": "library",
       "targets": {
+        "generate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "npx graphql-codegen --config libs/data/codegen.yml"
+              }
+            ]
+          }
+        },
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": { "lintFilePatterns": ["libs/data/**/*.ts"] }

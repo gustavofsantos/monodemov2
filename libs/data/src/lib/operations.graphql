@@ -1,0 +1,9 @@
+query formList {
+  forms {
+    id
+    questions {
+      placeholder
+    }
+  }
+}
+
