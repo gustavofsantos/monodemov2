@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@monodemov2/data": ["libs/data/src/index.ts"]
+      "@monodemov2/data": ["libs/data/src/index.ts"],
+      "@monodemov2/ui": ["libs/ui/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
