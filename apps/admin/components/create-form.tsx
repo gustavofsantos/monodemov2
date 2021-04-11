@@ -1,7 +1,7 @@
 import { Question, useFormCreatorMutation } from '@monodemov2/data';
 import { useEffect, useState } from 'react';
 
-export function CreateForm() {
+export function CreateForm({ onSuccess }) {
   const [questions, setQuestions] = useState([]);
   const creatorMutation = useFormCreatorMutation();
 
@@ -16,6 +16,7 @@ export function CreateForm() {
   useEffect(() => {
     if (creatorMutation.isSuccess) {
       setQuestions([]);
+      onSuccess();
     }
   }, [creatorMutation.isSuccess]);
 

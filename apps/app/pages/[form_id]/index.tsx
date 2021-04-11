@@ -1,13 +1,14 @@
 import {
-  AnswerQuestionData,
   Form,
   useFormAnswerMutation,
   useFormItemQuery,
 } from '@monodemov2/data';
 import { NextPageContext } from 'next';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 export default function FormPage({ formId }) {
+  const router = useRouter();
   const formQuery = useFormItemQuery({ id: formId as string });
   const mutation = useFormAnswerMutation();
 
@@ -19,6 +20,12 @@ export default function FormPage({ formId }) {
         answer: value as string,
       })),
     });
+
+  useEffect(() => {
+    if (mutation.isSuccess) {
+      router.push('/finish');
+    }
+  }, [mutation.isSuccess]);
 
   return (
     <article>
@@ -45,7 +52,6 @@ type FormProps = {
 };
 
 function FormAns({ form, onSubmit }: FormProps) {
-  console.log({ form });
   const [answers, setAnswers] = useState({});
 
   const handleSubmit = (ev) => {

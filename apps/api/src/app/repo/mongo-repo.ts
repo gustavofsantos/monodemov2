@@ -41,7 +41,7 @@ export class AskMongoRepo extends BaseMongoRepo implements AskRepo {
     });
   }
 
-  createForm(data: NewFormData) {
+  createForm(data: NewFormData): Promise<string> {
     return this.formsCollection(this.client)
       .then((coll) => coll.insertOne(data))
       .then((result) => result.insertedId)
@@ -50,7 +50,7 @@ export class AskMongoRepo extends BaseMongoRepo implements AskRepo {
       });
   }
 
-  createAnsweredForm(data: AnswerFormData) {
+  createAnsweredForm(data: AnswerFormData): Promise<string> {
     return this.answersCollection(this.client)
       .then((coll) => coll.insertOne(data))
       .then((result) => result.insertedId)
@@ -76,8 +76,8 @@ export class AskMongoRepo extends BaseMongoRepo implements AskRepo {
       .then(
         (doc): AnsweredForm => ({
           id: doc._id.toString(),
-          formId: doc.formOd,
-          questions: doc.questions,
+          formId: doc.formId,
+          questions: doc.answers,
         })
       );
   }
