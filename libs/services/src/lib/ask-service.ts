@@ -49,6 +49,16 @@ export class AskService extends BaseMongoRepo {
       });
   }
 
+  updateForm(id: string, data: NewFormData) {
+    return this.formsCollection(this.client)
+      .then((coll) =>
+        coll.updateOne({ _id: new ObjectId(id) }, { $set: { ...data } })
+      )
+      .catch((err) => {
+        throw err;
+      });
+  }
+
   createAnsweredForm(data: AnswerFormData): Promise<string> {
     return this.answersCollection(this.client)
       .then((coll) => coll.insertOne(data))
