@@ -1,25 +1,26 @@
 name: Unit Tests
 
 on:
-  pull_request
+  pull_request:
+    branches:
+      - main
 
 jobs:
   run_tests:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v1
         with:
           node-version: '14.x'
 
-      - name: Pull all branches
-        run: git pull
-
       - uses: c-hive/gha-yarn-cache@v1
 
       - name: Install dependencies
-        run: yarn
+        run: yarn install
 
       - name: Test affected code
-        run: yarn affected:test
+        run: yarn affected:test --base=remotes/origin/main --parallel
 
