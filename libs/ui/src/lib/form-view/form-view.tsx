@@ -1,6 +1,7 @@
 import React from 'react';
 import { Form } from '@monodemov2/data';
-import { Flex, Link, List, ListItem, Stack, Text } from '@chakra-ui/layout';
+import NextLink from 'next/link';
+import { Link, List, ListItem, Stack, Text } from '@chakra-ui/layout';
 import { QuestionView } from '../question-view';
 
 interface Props {
@@ -21,6 +22,7 @@ export function FormView({ form, appUrl }: Props) {
       bg="gray.100"
     >
       <Link href={appUrl + '/' + form.id}>access link</Link>
+      <NextLink href={`/${form.id}/edit`}>edit</NextLink>
 
       <List spacing="4">
         {form.questions.map((question) => (

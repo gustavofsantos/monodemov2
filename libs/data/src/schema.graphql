@@ -28,6 +28,7 @@ type Query {
 
 type Mutation {
   createForm(data: NewFormData!): Form
+  updateForm(formId: String!, data: NewFormData!): Form
   answerForm(data: AnswerFormData!): AnsweredForm
 }
 

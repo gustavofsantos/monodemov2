@@ -8,6 +8,16 @@ mutation formCreator($questions: [NewFormQuestionData]!) {
   }
 }
 
+mutation updateForm($id: String!, $questions: [NewFormQuestionData]!) {
+  updateForm(formId: $id, data: { questions: $questions }) {
+    id
+    questions {
+      label
+      placeholder
+    }
+  }
+}
+
 mutation formAnswer($formId: String!, $answers: [AnswerQuestionData]!) {
   answerForm(data: { formId: $formId, answers: $answers }) {
     id
