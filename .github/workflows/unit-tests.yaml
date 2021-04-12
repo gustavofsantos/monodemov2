@@ -12,7 +12,7 @@ jobs:
         with:
           node-version: '14.x'
 
-      - uses: Pull all branches
+      - name: Pull all branches
         run: git pull
 
       - uses: c-hive/gha-yarn-cache@v1
