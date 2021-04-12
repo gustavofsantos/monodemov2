@@ -1,7 +1,9 @@
+import { PageContents, PageTitle } from '@monodemov2/ui';
+
 export default function Index() {
   return (
-    <article>
-      <h1>Index page</h1>
-    </article>
+    <PageContents>
+      <PageTitle>Index page</PageTitle>
+    </PageContents>
   );
 }

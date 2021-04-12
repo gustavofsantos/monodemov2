@@ -1,7 +1,9 @@
+import { PageContents, PageTitle } from '@monodemov2/ui';
+
 export default function FinishPage() {
   return (
-    <article>
-      <h1>Thanks!</h1>
-    </article>
+    <PageContents>
+      <PageTitle>Thanks!</PageTitle>
+    </PageContents>
   );
 }

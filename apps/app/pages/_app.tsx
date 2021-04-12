@@ -2,6 +2,7 @@ import React from 'react';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ChakraProvider, Flex } from '@chakra-ui/react';
 
 import './styles.css';
 
@@ -13,13 +14,13 @@ function CustomApp({ Component, pageProps }: AppProps) {
       <Head>
         <title>app</title>
       </Head>
-      <div className="app">
-        <main>
+      <ChakraProvider>
+        <Flex>
           <QueryClientProvider client={queryClient}>
             <Component {...pageProps} />
           </QueryClientProvider>
-        </main>
-      </div>
+        </Flex>
+      </ChakraProvider>
     </>
   );
 }

@@ -1,11 +1,14 @@
+import { useEffect, useState } from 'react';
 import {
   Form,
   useFormAnswerMutation,
   useFormItemQuery,
 } from '@monodemov2/data';
+import { Input, PageContents, PageTitle } from '@monodemov2/ui';
 import { NextPageContext } from 'next';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { Button } from '@chakra-ui/button';
+import { Stack } from '@chakra-ui/layout';
 
 export default function FormPage({ formId }) {
   const router = useRouter();
@@ -28,13 +31,13 @@ export default function FormPage({ formId }) {
   }, [mutation.isSuccess]);
 
   return (
-    <article>
-      <h1>Form page</h1>
+    <PageContents>
+      <PageTitle>Ask!</PageTitle>
 
       {formQuery.isSuccess && !!formQuery.data.form && (
         <FormAns form={formQuery.data.form} onSubmit={handleSubmit} />
       )}
-    </article>
+    </PageContents>
   );
 }
 
@@ -48,10 +51,11 @@ export function getServerSideProps(ctx: NextPageContext) {
 
 type FormProps = {
   form: Form;
+  isLoading?: boolean;
   onSubmit(data: { [key: string]: string }): void;
 };
 
-function FormAns({ form, onSubmit }: FormProps) {
+function FormAns({ form, onSubmit, isLoading }: FormProps) {
   const [answers, setAnswers] = useState({});
 
   const handleSubmit = (ev) => {
@@ -60,28 +64,29 @@ function FormAns({ form, onSubmit }: FormProps) {
   };
 
   return (
-    <section>
-      {form.id}
+    <Stack as="form" spacing="4" onSubmit={handleSubmit}>
+      {form.questions.map((question) => (
+        <Question
+          key={question.label}
+          question={question}
+          onUpdate={(value) =>
+            setAnswers({
+              ...answers,
+              [question.label]: value,
+            })
+          }
+        />
+      ))}
 
-      <div>
-        <form onSubmit={handleSubmit}>
-          {form.questions.map((question) => (
-            <Question
-              key={question.label}
-              question={question}
-              onUpdate={(value) =>
-                setAnswers({
-                  ...answers,
-                  [question.label]: value,
-                })
-              }
-            />
-          ))}
-
-          <button>Ans</button>
-        </form>
-      </div>
-    </section>
+      <Button
+        type="submit"
+        colorScheme="blue"
+        isLoading={isLoading}
+        loadingText="Loading..."
+      >
+        Ans
+      </Button>
+    </Stack>
   );
 }
 
@@ -93,15 +98,13 @@ function Question({ question, onUpdate }) {
   }, [answer]);
 
   return (
-    <label htmlFor={question.label}>
-      <span>{question.label}</span>
-      <input
-        id={question.label}
-        value={answer}
-        onChange={(ev) => setAnswer(ev.target.value)}
-        placeholder={question.placeholder}
-        required
-      />
-    </label>
+    <Input
+      label={question.label}
+      placeholder={question.placeholder}
+      id={question.label}
+      value={answer}
+      onChange={(ev) => setAnswer(ev.target.value)}
+      isRequired
+    />
   );
 }

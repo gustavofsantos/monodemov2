@@ -1,12 +1,17 @@
-import { Question, useFormCreatorMutation } from '@monodemov2/data';
 import { useEffect, useState } from 'react';
+import { Button } from '@chakra-ui/button';
+import { List, ListItem, Stack } from '@chakra-ui/layout';
+import { useFormCreatorMutation } from '@monodemov2/data';
+import { FormNewQuestion, QuestionView } from '@monodemov2/ui';
 
 export function CreateForm({ onSuccess }) {
   const [questions, setQuestions] = useState([]);
   const creatorMutation = useFormCreatorMutation();
 
-  const handleCreateQuestion = ({ label, placeholder }) =>
+  const handleCreateQuestion = ({ label, placeholder }) => {
+    console.log('handleCreateQuestion', { label, placeholder });
     setQuestions([...questions, { label, placeholder }]);
+  };
 
   const handleDone = () =>
     creatorMutation.mutate({
@@ -21,58 +26,18 @@ export function CreateForm({ onSuccess }) {
   }, [creatorMutation.isSuccess]);
 
   return (
-    <div>
-      <CreateQuestion onCreate={handleCreateQuestion} />
+    <Stack>
+      <FormNewQuestion onSubmit={handleCreateQuestion} />
 
-      {questions.map((question) => (
-        <QuestionItem question={question} />
-      ))}
+      <List>
+        {questions.map((question) => (
+          <ListItem key={question.label + question.placeholder}>
+            <QuestionView question={question} />
+          </ListItem>
+        ))}
+      </List>
 
-      <button onClick={handleDone}>Done</button>
-    </div>
-  );
-}
-
-function CreateQuestion({ onCreate }) {
-  const [label, setLabel] = useState('');
-  const [placeholder, setPlaceholder] = useState('');
-
-  const handleSubmit = (ev) => {
-    ev.preventDefault();
-    onCreate({ label, placeholder });
-    setLabel('');
-    setPlaceholder('');
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        <span>Label</span>
-        <input
-          value={label}
-          onChange={(ev) => setLabel(ev.target.value)}
-          required
-        />
-      </label>
-
-      <label>
-        <span>Placeholder</span>
-        <input
-          value={placeholder}
-          onChange={(ev) => setPlaceholder(ev.target.value)}
-        />
-      </label>
-
-      <button>Create</button>
-    </form>
-  );
-}
-
-function QuestionItem({ question }: { question: Question }) {
-  return (
-    <div>
-      <span>Label: {question.label}</span>
-      <span>Placeholder: {question.placeholder}</span>
-    </div>
+      <Button onClick={handleDone}>Done</Button>
+    </Stack>
   );
 }
