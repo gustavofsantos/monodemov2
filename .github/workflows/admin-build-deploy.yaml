@@ -1,0 +1,33 @@
+name: "[MAIN] Admin app (Build and Deploy)"
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  run:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+
+      - uses: c-hive/gha-yarn-cache@v1
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Check if it is affected
+        id: affected_admin
+        run: yarn affected --base=remotes/origin/main
+
+      - name: Terminate if not affected
+        if: contains(steps.affected_admin.outputs, "admin")
+        run: exit 1
+
+      - name: Build
+        run: yarn build admin
