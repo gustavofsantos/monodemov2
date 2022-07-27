@@ -19,5 +19,9 @@ export const resolvers: Resolvers = {
       const formId = await ask.createForm(args.data);
       return ask.formById(formId);
     },
+    updateForm: async (args: { formId: string; data: NewFormData }) => {
+      await ask.updateForm(args.formId, args.data);
+      return ask.formById(args.formId);
+    },
   },
 };

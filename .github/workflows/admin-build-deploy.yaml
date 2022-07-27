@@ -26,7 +26,7 @@ jobs:
         run: yarn affected --base=remotes/origin/main
 
       - name: Terminate if not affected
-        if: contains(steps.affected_admin.outputs, "admin")
+        if: contains(steps.affected_admin.outputs, 'admin')
         run: exit 1
 
       - name: Build

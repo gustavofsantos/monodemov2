@@ -66,11 +66,18 @@ export type Form = {
 export type Mutation = {
   __typename?: 'Mutation';
   createForm?: Maybe<Form>;
+  updateForm?: Maybe<Form>;
   answerForm?: Maybe<AnsweredForm>;
 };
 
 
 export type MutationCreateFormArgs = {
+  data: NewFormData;
+};
+
+
+export type MutationUpdateFormArgs = {
+  formId: Scalars['String'];
   data: NewFormData;
 };
 
@@ -120,6 +127,24 @@ export type FormCreatorMutationVariables = Exact<{
 export type FormCreatorMutation = (
   { __typename?: 'Mutation' }
   & { createForm?: Maybe<(
+    { __typename?: 'Form' }
+    & Pick<Form, 'id'>
+    & { questions: Array<Maybe<(
+      { __typename?: 'Question' }
+      & Pick<Question, 'label' | 'placeholder'>
+    )>> }
+  )> }
+);
+
+export type UpdateFormMutationVariables = Exact<{
+  id: Scalars['String'];
+  questions: Array<Maybe<NewFormQuestionData>> | Maybe<NewFormQuestionData>;
+}>;
+
+
+export type UpdateFormMutation = (
+  { __typename?: 'Mutation' }
+  & { updateForm?: Maybe<(
     { __typename?: 'Form' }
     & Pick<Form, 'id'>
     & { questions: Array<Maybe<(
@@ -197,6 +222,25 @@ export const useFormCreatorMutation = <
     >(options?: UseMutationOptions<FormCreatorMutation, TError, FormCreatorMutationVariables, TContext>) => 
     useMutation<FormCreatorMutation, TError, FormCreatorMutationVariables, TContext>(
       (variables?: FormCreatorMutationVariables) => fetcher<FormCreatorMutation, FormCreatorMutationVariables>(FormCreatorDocument, variables)(),
+      options
+    );
+export const UpdateFormDocument = `
+    mutation updateForm($id: String!, $questions: [NewFormQuestionData]!) {
+  updateForm(formId: $id, data: {questions: $questions}) {
+    id
+    questions {
+      label
+      placeholder
+    }
+  }
+}
+    `;
+export const useUpdateFormMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<UpdateFormMutation, TError, UpdateFormMutationVariables, TContext>) => 
+    useMutation<UpdateFormMutation, TError, UpdateFormMutationVariables, TContext>(
+      (variables?: UpdateFormMutationVariables) => fetcher<UpdateFormMutation, UpdateFormMutationVariables>(UpdateFormDocument, variables)(),
       options
     );
 export const FormAnswerDocument = `
@@ -394,6 +438,7 @@ export type FormResolvers<ContextType = any, ParentType extends ResolversParentT
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createForm?: Resolver<Maybe<ResolversTypes['Form']>, ParentType, ContextType, RequireFields<MutationCreateFormArgs, 'data'>>;
+  updateForm?: Resolver<Maybe<ResolversTypes['Form']>, ParentType, ContextType, RequireFields<MutationUpdateFormArgs, 'formId' | 'data'>>;
   answerForm?: Resolver<Maybe<ResolversTypes['AnsweredForm']>, ParentType, ContextType, RequireFields<MutationAnswerFormArgs, 'data'>>;
 };
 
